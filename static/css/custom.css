@@ -1,0 +1,5 @@
+/* Ajusta o tamanho da imagem de login */
+.login-box .login-logo img {
+    max-width: 200px; /* Defina o tamanho desejado */
+    height: auto; /* Mantém a proporção da imagem */
+}
