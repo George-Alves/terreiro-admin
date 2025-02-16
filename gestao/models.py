@@ -17,7 +17,6 @@ class Terreiro(models.Model):
 
     class Meta:
         verbose_name = "Terreiro"
-        verbose_name_plural = "Terreiros"
 
     def __str__(self):
         return self.nome
@@ -155,3 +154,25 @@ class Evento(models.Model):
 
     def __str__(self):
         return self.titulo
+
+class Item(models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Item"
+        verbose_name_plural = "Itens"
+
+    def __str__(self):
+        return self.nome
+
+class DistribuicaoItens(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    mediun = models.ForeignKey(Mediun, on_delete=models.CASCADE)
+    data_distribuicao = models.DateField(default='2023-01-01')  # Data da distribuição
+
+    class Meta:
+        verbose_name ="Distribuição de Iten"
+
+    def __str__(self):
+        return f"{self.mediun.nome} = {self.item.nome}"

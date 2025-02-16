@@ -139,7 +139,8 @@ JAZZMIN_SETTINGS = {
     "login_logo": "./img/logo_co.jpeg",
     "show_ui_builder": True,
     "copyright": "George Alves",
-    "order_with_respect_to": ["gestao", "gestao.terreiro", "gestao.mediun", "gestao.mensalidade", "gestao.eventos"],
+    "order_with_respect_to": ["gestao", "gestao.terreiro", "gestao.mediun", "gestao.mensalidade", "gestao.eventos",
+                              "gestao.item"],
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
@@ -148,6 +149,8 @@ JAZZMIN_SETTINGS = {
         "gestao.mediun": "fas fa-users",
         "gestao.mensalidade": "fas fa-money-bill-wave",
         "gestao.evento": "fas fa-calendar",
+        "gestao.item": "fa-solid fa-cart-shopping",
+        "gestao.distribuicaoitens": "fa-solid fa-list-check"
     },
 }
 

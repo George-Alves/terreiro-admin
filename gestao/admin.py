@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Cargo, Hierarquia, Mediun, Mensalidade, Evento, CaminhadaEspiritual, Terreiro, RegistroEspiritual
 from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import ExtractMonth
 import csv
 from django.http import HttpResponse
 
+from .models import Cargo, Hierarquia, Mediun, Mensalidade, Evento, CaminhadaEspiritual, Terreiro, RegistroEspiritual, \
+    DistribuicaoItens, Item
 
 
 class CargoInline(admin.TabularInline):  # Herda de TabularInline
@@ -15,7 +16,6 @@ class HierarquiaInline(admin.TabularInline):  # Herda de TabularInline
     model = Hierarquia
     extra = 1  # Mostrar pelo menos 1 campo vazio para adicionar novas hierarquias
 
-
 class CaminhadaEspiritualInline(admin.StackedInline):  # ou admin.StackedInline
     model = CaminhadaEspiritual
     max_num = 1  # Apenas 1 por médium
@@ -23,7 +23,6 @@ class CaminhadaEspiritualInline(admin.StackedInline):  # ou admin.StackedInline
 class RegistroEspiritualInLine(admin.StackedInline):
     model = RegistroEspiritual
     max_num = 1 # Apenas 1 por Médiun
-
 
 class AniversariantesMesFilter(admin.SimpleListFilter):
     """Filtro para listar médiuns aniversariantes por mês"""
@@ -47,7 +46,6 @@ class AniversariantesMesFilter(admin.SimpleListFilter):
                 mes_aniversario=ExtractMonth('data_nascimento')
             ).filter(mes_aniversario=self.value())
         return queryset
-
 
 @admin.register(Mediun)
 class MediunAdmin(admin.ModelAdmin):
@@ -97,17 +95,14 @@ class MediunAdmin(admin.ModelAdmin):
     # Lista de ações disponíveis no Django Admin
     actions = [exportar_csv]
 
-
 @admin.register(Mensalidade)
 class MensalidadeAdmin(admin.ModelAdmin):
     list_display = ('mediun', 'valor', 'data_vencimento', 'paga')  # Exibe valores principais
     list_filter = ('paga', 'data_vencimento')  # Filtros
 
-
 @admin.register(Evento)
 class EventoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'data')  # Exibe os campos principais
-
 
 @admin.register(Terreiro)
 class TerreiroAdmin(admin.ModelAdmin):
@@ -121,4 +116,56 @@ class TerreiroAdmin(admin.ModelAdmin):
     list_display = ('nome', 'data_fundacao', 'email')  # Listagem no painel
     search_fields = ('nome', 'email')  # Pesquisa habilitada pelos campos 'nome' e 'email'
 
+@admin.register(Item)
+class ItemAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'descricao')
+    search_fields = ('nome',)
+    actions = ['distribuir_itens_para_mediuns']  # Adiciona a ação personalizada
 
+    def distribuir_itens_para_mediuns(self, request, queryset):
+        itens = Item.objects.all()  # Pega todos os itens
+        mediuns = Mediun.objects.all()  # Pega todos os médiuns
+
+        # Limpa distribuições anteriores (opcional)
+        DistribuicaoItens.objects.all().delete()
+
+        # Distribui os itens para os médiuns
+        for i, mediun in enumerate(mediuns):
+            item = itens[i % len(itens)]  # Usa o operador módulo para ciclar os itens
+            DistribuicaoItens.objects.create(item=item, mediun=mediun)
+
+        self.message_user(request, "Itens distribuídos automaticamente para todos os médiuns!")
+    distribuir_itens_para_mediuns.short_description = "Distribuir itens para todos os médiuns"
+
+@admin.register(DistribuicaoItens)
+class DistribuicaoItensAdmin(admin.ModelAdmin):
+    list_display = ('item', 'mediun', 'data_distribuicao')
+    list_filter = ('data_distribuicao', 'mediun')
+    search_fields = ('item__nome', 'mediun__nome')
+    actions = ['exportar_csv']  # Adiciona a opção de exportação no Django Admin
+
+    # Função para exportar dados selecionados para CSV
+    def exportar_csv(self, request, queryset):
+        # Define o tipo do response como CSV
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="distribuicao_itens_exportados.csv"'
+
+        # Cria o escritor CSV
+        writer = csv.writer(response)
+
+        # Escreve os cabeçalhos do CSV
+        writer.writerow(['Item', 'Médiun', 'Data de Distribuição'])
+
+        # Itera pelos objetos selecionados e escreve no arquivo CSV
+        for distribuicao in queryset:
+            writer.writerow([
+                distribuicao.item.nome if distribuicao.item else "Sem Nome",  # Nome do item
+                distribuicao.mediun.nome if distribuicao.mediun else "Sem Nome",  # Nome do médiun
+                distribuicao.data_distribuicao.strftime('%d/%m/%Y') if distribuicao.data_distribuicao else "Sem Data",
+                # Data formatada
+            ])
+
+        return response
+
+    # Atribui um nome amigável à ação
+    exportar_csv.short_description = "Exportar Distribuições selecionadas para CSV"
