@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-i)=@grseag_0$a%tcr_6!r3ni1#w%bh6v!233uxhdx)&3)ucv_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['https://terreiro-admin.onrender.com', 'localhost', '127.0.0.1']
 
+CORS_ALLOWED_ORIGINS = [
+    "https://terreiro-admin.onrender.com",
+]
 
 # Application definition
 
