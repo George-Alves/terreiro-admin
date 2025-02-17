@@ -119,10 +119,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Pasta static no nível do projeto
+    os.path.join(BASE_DIR, "static"),  # Defina o caminho absoluto
 ]
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -131,7 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 JAZZMIN_SETTINGS = {
     "welcome_sign": "Bem-vindo(a) ao Terreiro Admin!",  # Nova mensagem de boas-vindas
-    "custom_css": "css/custom.css",  # Caminho relativo à pasta static
+    "custom_css": "/css/custom.css",  # Caminho relativo à pasta static
     "site_title": "Terreiro Admin",
     "site_icon": "fas fa-home",
     "site_brand": "Terreiro Admin",
