@@ -3,3 +3,4 @@ Django==5.1.6
 django-jazzmin==3.0.1
 django-tabbed-admin==1.0.4
 sqlparse==0.5.3
+gunicorn==23.0.0
