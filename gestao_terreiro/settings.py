@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'gestao_terreiro.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'nome_do_banco',
-        'USER': 'nome_do_usuario',
-        'PASSWORD': 'senha_segura',
-        'HOST': 'localhost',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'QOgiteJoBQZyCcjioDxHJSwYNSriaIVy',
+        'HOST': 'postgres.railway.internal',
         'PORT': '5432',
     }
 }
